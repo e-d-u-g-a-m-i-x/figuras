@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>WebAR - Cubo flotante</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.2/aframe/build/aframe-ar.min.js"></script>
+    <style>
+      body { margin: 0; overflow: hidden; font-family: sans-serif; }
+      #mensaje {
+        position: absolute;
+        top: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        padding: 1rem;
+        border-radius: 8px;
+        display: none;
+        z-index: 999;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mensaje">
+      ✨ Cubo<br>
+      Vértices: 8<br>
+      Aristas: 12<br>
+      Área: 6a<sup>2</sup><br>
+      Volumen: a<sup>3</sup>
+    </div>
+
+    <a-scene embedded arjs>
+      <a-assets>
+        <a-asset-item id="modelo" src="cube.glb"></a-asset-item>
+        <audio id="sonido" src="ding.mp3"></audio>
+      </a-assets>
+
+      <a-marker preset="hiro">
+        <a-entity id="cubo"
+                  gltf-model="#modelo"
+                  position="0 0.5 0"
+                  scale="0.5 0.5 0.5"
+                  animation="property: position; to: 0 0.6 0; dir: alternate; dur: 1000; loop: true; easing: easeInOutSine">
+        </a-entity>
+      </a-marker>
+
+      <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+      const cubo = document.querySelector("#cubo");
+      const sonido = document.querySelector("#sonido");
+      const mensaje = document.querySelector("#mensaje");
+
+      cubo.addEventListener("click", () => {
+        sonido.play();
+        mensaje.style.display = "block";
+        setTimeout(() => mensaje.style.display = "none", 5000);
+      });
+    </script>
+  </body>
+</html>
