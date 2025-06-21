@@ -71,6 +71,7 @@
       <label for="figura">📌 Selecciona una figura:</label><br />
       <select id="figura">
         <option value="Cubo">🔷 Cubo</option>
+        <option value="Texto_Cubo">📝 Cubo + Texto</option>
         <option value="Esfera">⚪ Esfera</option>
         <option value="Cono">🔺 Cono</option>
         <option value="Cilindro">🟠 Cilindro</option>
@@ -129,7 +130,15 @@
           volumen: "1 unidad³",
           modelo: "Cubo.glb",
         },
-        
+        Texto_Cubo: {
+          nombre: "Cubo + Texto",
+          vertices: 8,
+          aristas: 12,
+          caras: 6,
+          area: "6 unidades²",
+          volumen: "1 unidad³",
+          modelo: "Texto_Cubo.glb",
+        },
         Esfera: {
           nombre: "Esfera",
           vertices: 482,
@@ -164,7 +173,7 @@
           caras: 7,
           area: "5ab + 5bh",
           volumen: "5/2ab h",
-          modelo: "Prisma pentagonal.023.glb",
+          modelo: "Prisma Pentagonal.glb",
         },
         Prisma_Hexagonal: {
           nombre: "Prisma Hexagonal",
@@ -197,7 +206,7 @@
 
       function actualizarFigura(nombre) {
         const fig = datos[nombre];
-        visor.setAttribute("src", fig.modelo);
+        visor.src = fig.modelo;
         sonido.play();
         textoLeido = `${fig.nombre}. Tiene ${fig.vertices} vértices, ${fig.aristas} aristas y ${fig.caras} caras. Área: ${fig.area}. Volumen: ${fig.volumen}`;
         infoContent.innerHTML = `
@@ -210,27 +219,6 @@
         const utterance = new SpeechSynthesisUtterance(textoLeido);
         utterance.lang = "es-MX";
         synth.speak(utterance);
-      }
-
-       ${fig.aristas} aristas y ${fig.caras} caras. Área: ${fig.area}. Volumen: ${fig.volumen}`;
-        infoContent.innerHTML = `
-          <strong>📌 ${fig.nombre}</strong><br>
-          Vértices: ${fig.vertices} | Aristas: ${fig.aristas}<br>
-          Caras: ${fig.caras}<br>
-          Área: ${fig.area} | Volumen: ${fig.volumen}
-        `;
-        info.style.display = "block";
-        const utterance = new SpeechSynthesisUtterance(textoLeido);
-        utterance.lang = "es-MX";
-        synth.speak(utterance);
-      }. Tiene ${fig.vertices} vértices, ${fig.aristas} aristas y ${fig.caras} caras. Área: ${fig.area}. Volumen: ${fig.volumen}`;
-        infoContent.innerHTML = `
-          <strong>📌 ${fig.nombre}</strong><br>
-          Vértices: ${fig.vertices} | Aristas: ${fig.aristas}<br>
-          Caras: ${fig.caras}<br>
-          Área: ${fig.area} | Volumen: ${fig.volumen}
-        `;
-        info.style.display = "block";
       }
 
       toggleBtn.addEventListener("click", () => {
@@ -262,9 +250,8 @@
         intro.lang = "es-MX";
         synth.speak(intro);
         actualizarFigura("Cubo");
-        setTimeout(() => visor.activateAR(), 2000);
+        setTimeout(() => visor.activateAR?.(), 2000);
       });
     </script>
   </body>
 </html>
-
