@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>WebAR Figuras sin marcador</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <style>
+      body { margin: 0; font-family: sans-serif; overflow: hidden; background: #000; color: white; }
+      #controls {
+        position: absolute; top: 10px; left: 10px; z-index: 2;
+        background: rgba(0, 0, 0, 0.6); padding: 10px; border-radius: 10px;
+      }
+      #info {
+        position: absolute; bottom: 10px; left: 10px; z-index: 2;
+        background: rgba(0, 0, 0, 0.7); padding: 10px; border-radius: 10px;
+        display: none;
+      }
+      model-viewer { width: 100vw; height: 100vh; }
+    </style>
+  </head>
+  <body>
+    <div id="controls">
+      📌 <label for="figura">Selecciona una figura:</label>
+      <select id="figura">
+        <option value="Cubo">🟦 Cubo</option>
+        <option value="Texto_Cubo">📄 Texto del Cubo</option>
+        <option value="Esfera">🟠 Esfera</option>
+        <option value="Cono">🔺 Cono</option>
+        <option value="Cilindro">🟢 Cilindro</option>
+        <option value="Prisma_Pentagonal">🔷 Prisma Pentagonal</option>
+        <option value="Prisma_Hexagonal">🟣 Prisma Hexagonal</option>
+        <option value="Toroide">🌀 Toroide</option>
+        <option value="Piramide">🟫 Pirámide</option>
+      </select>
+    </div>
+    <div id="info">
+      <strong>📌 <span id="nombreFigura"></span></strong><br />
+      Vértices: <span id="vertices"></span> | Aristas: <span id="aristas"></span><br />
+      Área: <span id="area"></span> | Volumen: <span id="volumen"></span>
+    </div>
+    <model-viewer id="visor" ar ar-modes="webxr scene-viewer quick-look" camera-controls autoplay auto-rotate
+      shadow-intensity="1" exposure="1" alt="Figura 3D" src="Cubo.glb">
+    </model-viewer>
+    <audio id="sonido" src="ding.mp3" preload="auto"></audio>
+    <script>
+      const visor = document.getElementById("visor");
+      const figuraSelect = document.getElementById("figura");
+      const info = document.getElementById("info");
+      const sonido = document.getElementById("sonido");
+
+      const datos = {
+        Cubo: { nombre: "Cubo", vertices: 8, aristas: 12, area: "6 unidades²", volumen: "1 unidad³", modelo: "Cubo.glb", sonido: "ding.mp3" },
+        Texto_Cubo: { nombre: "Cubo + Texto", vertices: 8, aristas: 12, area: "6 unidades²", volumen: "1 unidad³", modelo: "Texto_Cubo.glb", sonido: "ding.mp3" },
+        Esfera: { nombre: "Esfera", vertices: 482, aristas: 960, area: "4πr²", volumen: "4/3πr³", modelo: "Esfera.glb", sonido: "ding.mp3" },
+        Cono: { nombre: "Cono", vertices: 49, aristas: 96, area: "πr(r + g)", volumen: "1/3πr²h", modelo: "Cono.glb", sonido: "ding.mp3" },
+        Cilindro: { nombre: "Cilindro", vertices: 98, aristas: 192, area: "2πr(r + h)", volumen: "πr²h", modelo: "Cilindro.glb", sonido: "ding.mp3" },
+        Prisma_Pentagonal: { nombre: "Prisma Pentagonal", vertices: 10, aristas: 15, area: "5ab + 5bh", volumen: "5/2ab h", modelo: "Prisma_Pentagonal.glb", sonido: "ding.mp3" },
+        Prisma_Hexagonal: { nombre: "Prisma Hexagonal", vertices: 12, aristas: 18, area: "6ab + 6bh", volumen: "3abh", modelo: "Prisma_Hexagonal.glb", sonido: "ding.mp3" },
+        Toroide: { nombre: "Toroide", vertices: 512, aristas: 1024, area: "4π²Rr", volumen: "2π²Rr²", modelo: "Toroide.glb", sonido: "ding.mp3" },
+        Piramide: { nombre: "Pirámide", vertices: 5, aristas: 8, area: "Base + caras laterales", volumen: "1/3·base·altura", modelo: "Piramide.glb", sonido: "ding.mp3" }
+      };
+
+      figuraSelect.addEventListener("change", () => {
+        const sel = figuraSelect.value;
+        const fig = datos[sel];
+        visor.src = fig.modelo;
+        sonido.src = fig.sonido;
+        sonido.play();
+        info.style.display = "none";
+      });
+
+      visor.addEventListener("click", () => {
+        const sel = figuraSelect.value;
+        const fig = datos[sel];
+        document.getElementById("nombreFigura").textContent = fig.nombre;
+        document.getElementById("vertices").textContent = fig.vertices;
+        document.getElementById("aristas").textContent = fig.aristas;
+        document.getElementById("area").textContent = fig.area;
+        document.getElementById("volumen").textContent = fig.volumen;
+        info.style.display = "block";
+        setTimeout(() => info.style.display = "none", 5000);
+      });
+    </script>
+  </body>
+</html>
