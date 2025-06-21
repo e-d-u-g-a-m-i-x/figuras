@@ -27,11 +27,42 @@
         margin-bottom: 10px;
       }
       #info {
-        margin-top: 10px;
+        position: absolute;
+        z-index: 1;
+        bottom: 5%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 1rem;
+        text-align: center;
+        display: none;
+      }
+      #closeInfo {
+        margin-top: 8px;
+        background-color: #ff4444;
+        color: white;
+        border: none;
+        padding: 4px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      #audioHelp {
+        background-color: #2196f3;
+        color: white;
+        border: none;
+        padding: 4px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 8px;
+        margin-left: 6px;
       }
       model-viewer {
         width: 100vw;
         height: 100vh;
+        touch-action: pan-y;
       }
     </style>
   </head>
@@ -39,18 +70,22 @@
     <div id="hud">
       <label for="figura">📌 Selecciona una figura:</label><br />
       <select id="figura">
-        <option value="Cubo">🔷 Cubo</option>
-        <option value="Texto_Cubo">📝 Cubo + Texto</option>
-        <option value="Esfera">⚪ Esfera</option>
-        <option value="Cono">🔺 Cono</option>
-        <option value="Cilindro">🟠 Cilindro</option>
-        <option value="Prisma_Pentagonal">🔶 Prisma Pentagonal</option>
-        <option value="Prisma_Hexagonal">🔷 Prisma Hexagonal</option>
-        <option value="Toroide">🌀 Toroide</option>
-        <option value="Pirámide">🔺 Pirámide</option>
+        <option value="Cubo"> Cubo</option>
+        <option value="Esfera"> Esfera</option>
+        <option value="Cono"> Cono</option>
+        <option value="Cilindro"> Cilindro</option>
+        <option value="Prisma_Pentagonal"> Prisma Pentagonal</option>
+        <option value="Prisma_Hexagonal"> Prisma Hexagonal</option>
+        <option value="Toroide"> Toroide</option>
+        <option value="Pirámide"> Pirámide</option>
       </select>
-      <button id="toggleInfo">👁 Mostrar/Ocultar datos</button>
-      <div id="info"></div>
+      <button id="toggleInfo"> Mostrar/Ocultar datos</button>
+    </div>
+
+    <div id="info">
+      <div id="infoContent"></div>
+      <button id="closeInfo">Cerrar</button>
+      <button id="audioHelp">🔊 Escuchar</button>
     </div>
 
     <model-viewer
@@ -65,6 +100,8 @@
       exposure="1.1"
       placement="floor"
       alt="Figura 3D"
+      interaction-prompt="none"
+      xr-environment
     ></model-viewer>
 
     <audio id="sonido" src="ding.mp3" preload="auto"></audio>
@@ -73,8 +110,14 @@
       const visor = document.getElementById("visor");
       const figuraSelect = document.getElementById("figura");
       const info = document.getElementById("info");
+      const infoContent = document.getElementById("infoContent");
       const sonido = document.getElementById("sonido");
       const toggleBtn = document.getElementById("toggleInfo");
+      const closeBtn = document.getElementById("closeInfo");
+      const audioHelpBtn = document.getElementById("audioHelp");
+
+      const synth = window.speechSynthesis;
+      let textoLeido = "";
 
       const datos = {
         Cubo: {
@@ -86,15 +129,7 @@
           volumen: "1 unidad³",
           modelo: "Cubo.glb",
         },
-        Texto_Cubo: {
-          nombre: "Cubo + Texto",
-          vertices: 8,
-          aristas: 12,
-          caras: 6,
-          area: "6 unidades²",
-          volumen: "1 unidad³",
-          modelo: "Texto_Cubo.glb",
-        },
+        
         Esfera: {
           nombre: "Esfera",
           vertices: 482,
@@ -129,7 +164,7 @@
           caras: 7,
           area: "5ab + 5bh",
           volumen: "5/2ab h",
-          modelo: "Prisma Pentagonal.glb",
+          modelo: "Prisma pentagonal.023.glb",
         },
         Prisma_Hexagonal: {
           nombre: "Prisma Hexagonal",
@@ -162,13 +197,21 @@
 
       function actualizarFigura(nombre) {
         const fig = datos[nombre];
-        visor.src = fig.modelo;
-        visor.setAttribute("ar", "true");
-        visor.setAttribute("placement", "floor");
-        visor.setAttribute("ar-modes", "webxr");
-        visor.setAttribute("ar-scale", "fixed");
+        visor.setAttribute("src", fig.modelo);
         sonido.play();
-        info.innerHTML = `
+        textoLeido = `${fig.nombre}. Tiene ${fig.vertices} vértices, ${fig.aristas} aristas y ${fig.caras} caras. Área: ${fig.area}. Volumen: ${fig.volumen}`;
+        infoContent.innerHTML = `
+          <strong>📌 ${fig.nombre}</strong><br>
+          Vértices: ${fig.vertices} | Aristas: ${fig.aristas}<br>
+          Caras: ${fig.caras}<br>
+          Área: ${fig.area} | Volumen: ${fig.volumen}
+        `;
+        info.style.display = "block";
+        const utterance = new SpeechSynthesisUtterance(textoLeido);
+        utterance.lang = "es-MX";
+        synth.speak(utterance);
+      }. Tiene ${fig.vertices} vértices, ${fig.aristas} aristas y ${fig.caras} caras. Área: ${fig.area}. Volumen: ${fig.volumen}`;
+        infoContent.innerHTML = `
           <strong>📌 ${fig.nombre}</strong><br>
           Vértices: ${fig.vertices} | Aristas: ${fig.aristas}<br>
           Caras: ${fig.caras}<br>
@@ -181,17 +224,32 @@
         info.style.display = info.style.display === "none" ? "block" : "none";
       });
 
+      closeBtn.addEventListener("click", () => {
+        info.style.display = "none";
+      });
+
+      audioHelpBtn.addEventListener("click", () => {
+        const utterance = new SpeechSynthesisUtterance(textoLeido);
+        utterance.lang = "es-MX";
+        synth.speak(utterance);
+      });
+
       figuraSelect.addEventListener("change", () => {
         actualizarFigura(figuraSelect.value);
       });
 
-      visor.addEventListener("click", () => {
-        actualizarFigura(figuraSelect.value);
+      visor.addEventListener("scene-graph-ready", () => {
+        visor.addEventListener("click", () => {
+          info.style.display = info.style.display === "none" ? "block" : "none";
+        });
       });
 
       window.addEventListener("DOMContentLoaded", () => {
+        const intro = new SpeechSynthesisUtterance("Bienvenido. Selecciona una figura del menú para explorarla en realidad aumentada. Puedes tocarla para ver su información.");
+        intro.lang = "es-MX";
+        synth.speak(intro);
         actualizarFigura("Cubo");
-        setTimeout(() => visor.activateAR(), 1500);
+        setTimeout(() => visor.activateAR(), 2000);
       });
     </script>
   </body>
