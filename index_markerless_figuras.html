@@ -60,15 +60,15 @@
     <div id="hud">
       <label for="figura">📌 Selecciona una figura:</label><br />
       <select id="figura">
-        <option value="Cubo"> Cubo</option>
-
-        <option value="Esfera"> Esfera</option>
+        <option value="Cubo">🔷 Cubo</option>
+        <option value="Texto_Cubo">📝 Cubo + Texto</option>
+        <option value="Esfera">⚪ Esfera</option>
         <option value="Cono">🔺 Cono</option>
-        <option value="Cilindro"> Cilindro</option>
-      
-        <option value="Prisma_Hexagonal"> Prisma Hexagonal</option>
-        <option value="Toroide"> Toroide</option>
-        <option value="Pirámide"> Pirámide</option>
+        <option value="Cilindro">🟠 Cilindro</option>
+        <option value="Prisma_Pentagonal">🔶 Prisma Pentagonal</option>
+        <option value="Prisma_Hexagonal">🔷 Prisma Hexagonal</option>
+        <option value="Toroide">🌀 Toroide</option>
+        <option value="Pirámide">🔺 Pirámide</option>
       </select>
       <button id="resetBtn">🔄 Reiniciar</button>
     </div>
@@ -151,6 +151,15 @@
           volumen: "πr²h",
           modelo: "Cilindro.glb",
         },
+        Prisma_Pentagonal: {
+          nombre: "Prisma Pentagonal",
+          vertices: 10,
+          aristas: 15,
+          caras: 7,
+          area: "5ab + 5bh",
+          volumen: "5/2ab h",
+          modelo: "Prisma Pentagonal.glb",
+        },
         Prisma_Hexagonal: {
           nombre: "Prisma Hexagonal",
           vertices: 12,
@@ -188,6 +197,12 @@
         sonido.play();
         infoContent.innerHTML = `
           <strong>📌 ${fig.nombre}</strong><br>
+          Vértices: ${fig.vertices} | Aristas: ${fig.aristas}<br>
+          Caras: ${fig.caras}<br>
+          Área: ${fig.area} | Volumen: ${fig.volumen}
+        `;
+        info.style.display = "none";
+      }<br>
           Vértices: ${fig.vertices} | Aristas: ${fig.aristas}<br>
           Caras: ${fig.caras}<br>
           Área: ${fig.area} | Volumen: ${fig.volumen}
