@@ -22,9 +22,12 @@
         border-radius: 10px;
         font-size: 1rem;
       }
-      select {
+      select, button {
         font-size: 1.1rem;
         margin-bottom: 10px;
+      }
+      #info {
+        margin-top: 10px;
       }
       model-viewer {
         width: 100vw;
@@ -37,7 +40,7 @@
       <label for="figura">📌 Selecciona una figura:</label><br />
       <select id="figura">
         <option value="Cubo">🔷 Cubo</option>
-     
+        <option value="Texto_Cubo">📝 Cubo + Texto</option>
         <option value="Esfera">⚪ Esfera</option>
         <option value="Cono">🔺 Cono</option>
         <option value="Cilindro">🟠 Cilindro</option>
@@ -46,6 +49,7 @@
         <option value="Toroide">🌀 Toroide</option>
         <option value="Pirámide">🔺 Pirámide</option>
       </select>
+      <button id="toggleInfo">👁 Mostrar/Ocultar datos</button>
       <div id="info"></div>
     </div>
 
@@ -70,6 +74,7 @@
       const figuraSelect = document.getElementById("figura");
       const info = document.getElementById("info");
       const sonido = document.getElementById("sonido");
+      const toggleBtn = document.getElementById("toggleInfo");
 
       const datos = {
         Cubo: {
@@ -81,7 +86,15 @@
           volumen: "1 unidad³",
           modelo: "Cubo.glb",
         },
-        
+        Texto_Cubo: {
+          nombre: "Cubo + Texto",
+          vertices: 8,
+          aristas: 12,
+          caras: 6,
+          area: "6 unidades²",
+          volumen: "1 unidad³",
+          modelo: "Texto_Cubo.glb",
+        },
         Esfera: {
           nombre: "Esfera",
           vertices: 482,
@@ -161,7 +174,12 @@
           Caras: ${fig.caras}<br>
           Área: ${fig.area} | Volumen: ${fig.volumen}
         `;
+        info.style.display = "block";
       }
+
+      toggleBtn.addEventListener("click", () => {
+        info.style.display = info.style.display === "none" ? "block" : "none";
+      });
 
       figuraSelect.addEventListener("change", () => {
         actualizarFigura(figuraSelect.value);
